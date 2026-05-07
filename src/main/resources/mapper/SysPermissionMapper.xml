@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bingran.mapper.SysPermissionMapper">
+    <resultMap id="BaseResultMap" type="com.bingran.entity.SysPermission">
+        <id column="id" property="id"/>
+        <result column="permission_code" property="permissionCode"/>
+        <result column="permission_name" property="permissionName"/>
+        <result column="permission_path" property="permissionPath"/>
+        <result column="permission_type" property="permissionType"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT id, permission_code, permission_name, permission_path, permission_type, parent_id, create_time
+        FROM sys_permission
+    </select>
+
+    <select id="selectByRoleId" resultMap="BaseResultMap">
+        SELECT p.id, p.permission_code, p.permission_name, p.permission_path, p.permission_type, p.parent_id, p.create_time
+        FROM sys_permission p
+        INNER JOIN sys_role_permission rp ON p.id = rp.permission_id
+        WHERE rp.role_id = #{roleId}
+    </select>
+</mapper>

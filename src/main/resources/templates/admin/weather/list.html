@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气列表 - 晴雨通天气管理系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f5f5f5; }
+        .header { background: #667eea; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .msg { padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 20px; }
+        .toolbar { margin-bottom: 20px; }
+        .toolbar a { padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+        table { width: 100%; background: white; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #667eea; color: white; }
+        tr:hover { background: #f5f5f5; }
+        .actions a { margin-right: 10px; color: #667eea; text-decoration: none; }
+        .actions .delete { color: #dc3545; }
+        .back { margin-top: 20px; }
+        .back a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>天气管理</h1>
+        <a th:href="@{/logout}" style="color: white; text-decoration: none;">退出登录</a>
+    </div>
+    <div class="container">
+        <div th:if="${msg}" class="msg" th:text="${msg}">提示信息</div>
+        <div class="toolbar">
+            <a th:href="@{/admin/weather/add}">新增天气</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>城市名称</th>
+                    <th>温度(℃)</th>
+                    <th>天气状况</th>
+                    <th>风向风力</th>
+                    <th>湿度(%)</th>
+                    <th>空气质量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="weather : ${weathers}">
+                    <td th:text="${weather.id}">ID</td>
+                    <td th:text="${weather.cityName}">城市名称</td>
+                    <td th:text="${weather.temperature}">温度</td>
+                    <td th:text="${weather.weatherDesc}">天气状况</td>
+                    <td th:text="${weather.wind}">风向风力</td>
+                    <td th:text="${weather.humidity}">湿度</td>
+                    <td th:text="${weather.airQuality}">空气质量</td>
+                    <td class="actions">
+                        <a th:href="@{/admin/weather/edit/{id}(id=${weather.id})}">编辑</a>
+                        <a class="delete" th:href="@{/admin/weather/delete/{id}(id=${weather.id})}" onclick="return confirm('确定删除?')">删除</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="back">
+            <a th:href="@{/admin/index}">返回后台首页</a>
+        </div>
+    </div>
+</body>
+</html>

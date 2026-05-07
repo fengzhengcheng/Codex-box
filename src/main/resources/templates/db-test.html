@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库总览 - 晴雨通天气管理系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+        .value {
+            color: #333;
+            margin-left: 10px;
+        }
+        .section {
+            margin-top: 40px;
+        }
+        .section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .data-table th, .data-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .data-table tr:nth-child(even):hover {
+            background-color: #f5f5f5;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>晴雨通天气管理系统 - 数据库总览</h1>
+        
+        <div class="status" th:class="${status == '连接成功' ? 'status success' : 'status error'}">
+            <span th:text="${status}">连接状态</span>
+        </div>
+        
+        <div class="info-item">
+            <span class="label">数据库版本:</span>
+            <span class="value" th:text="${dbVersion}">未知</span>
+        </div>
+        
+        <div class="info-item">
+            <span class="label">详细信息:</span>
+            <span class="value" th:text="${message}">无</span>
+        </div>
+        
+        <div class="section" th:if="${users != null and !users.isEmpty()}">
+            <h2>用户表 (sys_user)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>手机号</th>
+                            <th>角色</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}">ID</td>
+                            <td th:text="${user.username}">用户名</td>
+                            <td th:text="${user.phone}">手机号</td>
+                            <td th:text="${user.role}">角色</td>
+                            <td th:text="${user.status}">状态</td>
+                            <td th:text="${user.createTime}">创建时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${weathers != null and !weathers.isEmpty()}">
+            <h2>城市天气表 (city_weather)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>城市名称</th>
+                            <th>温度(℃)</th>
+                            <th>天气状况</th>
+                            <th>风向风力</th>
+                            <th>湿度(%)</th>
+                            <th>空气质量</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="weather : ${weathers}">
+                            <td th:text="${weather.id}">ID</td>
+                            <td th:text="${weather.cityName}">城市名称</td>
+                            <td th:text="${weather.temperature}">温度</td>
+                            <td th:text="${weather.weatherDesc}">天气状况</td>
+                            <td th:text="${weather.wind}">风向风力</td>
+                            <td th:text="${weather.humidity}">湿度</td>
+                            <td th:text="${weather.airQuality}">空气质量</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${logs != null and !logs.isEmpty()}">
+            <h2>用户操作日志表 (user_operation_log)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>关联用户ID</th>
+                            <th>操作内容</th>
+                            <th>操作IP</th>
+                            <th>操作时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="log : ${logs}">
+                            <td th:text="${log.id}">ID</td>
+                            <td th:text="${log.userId}">关联用户ID</td>
+                            <td th:text="${log.operationContent}">操作内容</td>
+                            <td th:text="${log.operationIp}">操作IP</td>
+                            <td th:text="${log.operationTime}">操作时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${favorites != null and !favorites.isEmpty()}">
+            <h2>用户收藏表 (user_favorite)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>关联用户ID</th>
+                            <th>收藏城市列表</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="fav : ${favorites}">
+                            <td th:text="${fav.id}">ID</td>
+                            <td th:text="${fav.userId}">关联用户ID</td>
+                            <td th:text="${fav.favoriteCities}">收藏城市列表</td>
+                            <td th:text="${fav.createTime}">创建时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${alerts != null and !alerts.isEmpty()}">
+            <h2>天气预警表 (weather_alert)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>关联城市ID</th>
+                            <th>预警类型</th>
+                            <th>预警等级</th>
+                            <th>发布时间</th>
+                            <th>生效时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="alert : ${alerts}">
+                            <td th:text="${alert.id}">ID</td>
+                            <td th:text="${alert.cityId}">关联城市ID</td>
+                            <td th:text="${alert.alertType}">预警类型</td>
+                            <td th:text="${alert.alertLevel}">预警等级</td>
+                            <td th:text="${alert.publishTime}">发布时间</td>
+                            <td th:text="${alert.effectiveTime}">生效时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${roles != null and !roles.isEmpty()}">
+            <h2>系统角色表 (sys_role)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>角色编码</th>
+                            <th>角色名称</th>
+                            <th>角色描述</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="role : ${roles}">
+                            <td th:text="${role.id}">ID</td>
+                            <td th:text="${role.roleCode}">角色编码</td>
+                            <td th:text="${role.roleName}">角色名称</td>
+                            <td th:text="${role.roleDesc}">角色描述</td>
+                            <td th:text="${role.createTime}">创建时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${permissions != null and !permissions.isEmpty()}">
+            <h2>系统权限表 (sys_permission)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>权限编码</th>
+                            <th>权限名称</th>
+                            <th>权限路径</th>
+                            <th>权限类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="perm : ${permissions}">
+                            <td th:text="${perm.id}">ID</td>
+                            <td th:text="${perm.permissionCode}">权限编码</td>
+                            <td th:text="${perm.permissionName}">权限名称</td>
+                            <td th:text="${perm.permissionPath}">权限路径</td>
+                            <td th:text="${perm.permissionType}">权限类型</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section" th:if="${rolePermissions != null and !rolePermissions.isEmpty()}">
+            <h2>角色权限关联表 (sys_role_permission)</h2>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>关联角色ID</th>
+                            <th>关联权限ID</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="rp : ${rolePermissions}">
+                            <td th:text="${rp.id}">ID</td>
+                            <td th:text="${rp.roleId}">关联角色ID</td>
+                            <td th:text="${rp.permissionId}">关联权限ID</td>
+                            <td th:text="${rp.createTime}">创建时间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

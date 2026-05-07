@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bingran.mapper.CityWeatherMapper">
+    <resultMap id="BaseResultMap" type="com.bingran.entity.CityWeather">
+        <id column="id" property="id"/>
+        <result column="city_name" property="cityName"/>
+        <result column="temperature" property="temperature"/>
+        <result column="weather_desc" property="weatherDesc"/>
+        <result column="wind" property="wind"/>
+        <result column="humidity" property="humidity"/>
+        <result column="air_quality" property="airQuality"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT id, city_name, temperature, weather_desc, wind, humidity, air_quality, update_time
+        FROM city_weather
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT id, city_name, temperature, weather_desc, wind, humidity, air_quality, update_time
+        FROM city_weather WHERE id = #{id}
+    </select>
+
+    <select id="selectByCityName" resultMap="BaseResultMap">
+        SELECT id, city_name, temperature, weather_desc, wind, humidity, air_quality, update_time
+        FROM city_weather WHERE city_name = #{cityName}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO city_weather (city_name, temperature, weather_desc, wind, humidity, air_quality)
+        VALUES (#{cityName}, #{temperature}, #{weatherDesc}, #{wind}, #{humidity}, #{airQuality})
+    </insert>
+
+    <update id="update">
+        UPDATE city_weather SET
+            city_name = #{cityName},
+            temperature = #{temperature},
+            weather_desc = #{weatherDesc},
+            wind = #{wind},
+            humidity = #{humidity},
+            air_quality = #{airQuality}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM city_weather WHERE id = #{id}
+    </delete>
+
+    <select id="selectByKeyword" resultMap="BaseResultMap">
+        SELECT id, city_name, temperature, weather_desc, wind, humidity, air_quality, update_time
+        FROM city_weather
+        <where>
+            <if test="keyword != null and keyword != ''">
+                city_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

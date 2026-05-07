@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bingran.mapper.WeatherAlertMapper">
+    <resultMap id="BaseResultMap" type="com.bingran.entity.WeatherAlert">
+        <id column="id" property="id"/>
+        <result column="city_id" property="cityId"/>
+        <result column="alert_type" property="alertType"/>
+        <result column="alert_level" property="alertLevel"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="effective_time" property="effectiveTime"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT id, city_id, alert_type, alert_level, publish_time, effective_time
+        FROM weather_alert
+        ORDER BY publish_time DESC
+    </select>
+
+    <select id="selectByCityId" resultMap="BaseResultMap">
+        SELECT id, city_id, alert_type, alert_level, publish_time, effective_time
+        FROM weather_alert
+        WHERE city_id = #{cityId}
+        ORDER BY publish_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO weather_alert (city_id, alert_type, alert_level, effective_time)
+        VALUES (#{cityId}, #{alertType}, #{alertLevel}, #{effectiveTime})
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM weather_alert WHERE id = #{id}
+    </delete>
+</mapper>

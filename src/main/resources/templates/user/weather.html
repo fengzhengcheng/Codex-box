@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气查询 - 晴雨通天气管理系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f5f5f5; }
+        .header { background: #667eea; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .logout { color: white; text-decoration: none; margin-left: 20px; }
+        .back { margin-top: 20px; }
+        .back a { color: #667eea; text-decoration: none; }
+        .search-box { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .search-box input { padding: 10px 15px; width: 300px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .search-box button { padding: 10px 25px; margin-left: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn-search { background: #667eea; color: white; }
+        .btn-search:hover { background: #5568d3; }
+        .btn-reset { background: #999; color: white; }
+        .btn-reset:hover { background: #888; }
+        .table-container { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #333; font-weight: bold; }
+        tr:hover { background: #f8f9fa; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state p { margin: 0; }
+        .error-message { background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .success-message { background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .loading { text-align: center; padding: 40px; color: #667eea; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>天气查询</h1>
+        <div>
+            <a th:href="@{/user/index}" class="logout">返回用户首页</a>
+            <a th:href="@{/logout}" class="logout">退出登录</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="keyword" placeholder="请输入城市名称进行查询" />
+            <button class="btn-search" onclick="searchWeather()">查询</button>
+            <button class="btn-reset" onclick="resetSearch()">重置</button>
+        </div>
+
+        <div id="errorDiv" class="error-message" style="display: none;"></div>
+        
+        <div id="loadingDiv" class="loading" style="display: none;">加载中...</div>
+
+        <div id="tableContainer" class="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>城市名称</th>
+                        <th>温度</th>
+                        <th>天气状况</th>
+                        <th>风向风力</th>
+                        <th>湿度</th>
+                        <th>空气质量</th>
+                        <th>更新时间</th>
+                    </tr>
+                </thead>
+                <tbody id="weatherTableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="emptyDiv" class="empty-state" style="display: none;">
+            <p>暂无天气数据</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            searchWeather();
+            document.getElementById('keyword').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    searchWeather();
+                }
+            });
+        });
+
+        function searchWeather() {
+            const keyword = document.getElementById('keyword').value.trim();
+            const url = '/api/weather/search' + (keyword ? '?keyword=' + encodeURIComponent(keyword) : '');
+            
+            document.getElementById('errorDiv').style.display = 'none';
+            document.getElementById('tableContainer').style.display = 'none';
+            document.getElementById('emptyDiv').style.display = 'none';
+            document.getElementById('loadingDiv').style.display = 'block';
+
+            fetch(url, {
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('loadingDiv').style.display = 'none';
+                    
+                    if (data.code === 200) {
+                        if (data.data && data.data.length > 0) {
+                            renderWeatherList(data.data);
+                        } else {
+                            document.getElementById('emptyDiv').querySelector('p').textContent = '未查询到天气数据';
+                            document.getElementById('emptyDiv').style.display = 'block';
+                        }
+                    } else {
+                        document.getElementById('errorDiv').textContent = data.message || '查询失败';
+                        document.getElementById('errorDiv').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loadingDiv').style.display = 'none';
+                    if (error.message === 'HTTP 401') {
+                        document.getElementById('errorDiv').textContent = '请先登录';
+                    } else if (error.message === 'HTTP 403') {
+                        document.getElementById('errorDiv').textContent = '没有权限访问';
+                    } else {
+                        document.getElementById('errorDiv').textContent = '网络错误，请稍后重试';
+                    }
+                    document.getElementById('errorDiv').style.display = 'block';
+                });
+        }
+
+        function resetSearch() {
+            document.getElementById('keyword').value = '';
+            searchWeather();
+        }
+
+        function renderWeatherList(weathers) {
+            const tbody = document.getElementById('weatherTableBody');
+            tbody.innerHTML = '';
+
+            if (!weathers || weathers.length === 0) {
+                document.getElementById('emptyDiv').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('tableContainer').style.display = 'block';
+
+            weathers.forEach(weather => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${weather.cityName || '-'}</td>
+                    <td>${weather.temperature || '-'}°C</td>
+                    <td>${weather.weatherDesc || '-'}</td>
+                    <td>${weather.wind || '-'}</td>
+                    <td>${weather.humidity || '-'}%</td>
+                    <td>${weather.airQuality || '-'}</td>
+                    <td>${formatDateTime(weather.updateTime) || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function formatDateTime(dateTimeStr) {
+            if (!dateTimeStr) return '';
+            try {
+                const date = new Date(dateTimeStr);
+                return date.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch (e) {
+                return dateTimeStr;
+            }
+        }
+    </script>
+</body>
+</html>
