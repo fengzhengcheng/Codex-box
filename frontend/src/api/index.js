@@ -2,8 +2,10 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/router'
 
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '/api'
+
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_URL,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json'
