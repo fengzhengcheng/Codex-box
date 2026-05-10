@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的收藏 - 晴雨通天气管理系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f5f5f5; }
+        .header { background: #667eea; color: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .container { max-width: 600px; margin: 30px auto; padding: 30px; background: white; border-radius: 10px; }
+        .logout { color: white; text-decoration: none; }
+        .msg { padding: 10px; background: #d4edda; color: #155724; border-radius: 5px; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; height: 100px; }
+        button { padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #5568d3; }
+        .back { margin-top: 20px; }
+        .back a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>我的收藏</h1>
+        <a th:href="@{/logout}" class="logout">退出登录</a>
+    </div>
+    <div class="container">
+        <div th:if="${msg}" class="msg" th:text="${msg}">提示信息</div>
+        <form th:action="@{/user/favorite}" method="post">
+            <div class="form-group">
+                <label>收藏城市（用逗号分隔）</label>
+                <textarea name="favoriteCities" th:text="${favorite != null ? favorite.favoriteCities : ''}"></textarea>
+            </div>
+            <button type="submit">保存收藏</button>
+        </form>
+        <div class="back">
+            <a th:href="@{/user/index}">返回用户首页</a>
+        </div>
+    </div>
+</body>
+</html>

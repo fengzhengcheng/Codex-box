@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气编辑 - 晴雨通天气管理系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f5f5f5; }
+        .header { background: #667eea; color: white; padding: 15px 30px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .container { max-width: 600px; margin: 30px auto; padding: 30px; background: white; border-radius: 10px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #5568d3; }
+        .btn-group { display: flex; gap: 10px; }
+        .back { margin-top: 20px; }
+        .back a { color: #667eea; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 th:text="${action == 'add' ? '新增天气' : '编辑天气'}">天气编辑</h1>
+    </div>
+    <div class="container">
+        <form th:action="@{/admin/weather/{action}(action=${action})}" method="post">
+            <input type="hidden" name="id" th:value="${weather.id}">
+            <div class="form-group">
+                <label>城市名称</label>
+                <input type="text" name="cityName" th:value="${weather.cityName}" required>
+            </div>
+            <div class="form-group">
+                <label>温度(℃)</label>
+                <input type="text" name="temperature" th:value="${weather.temperature}" required>
+            </div>
+            <div class="form-group">
+                <label>天气状况</label>
+                <select name="weatherDesc" th:value="${weather.weatherDesc}">
+                    <option value="晴">晴</option>
+                    <option value="多云">多云</option>
+                    <option value="阴">阴</option>
+                    <option value="小雨">小雨</option>
+                    <option value="中雨">中雨</option>
+                    <option value="大雨">大雨</option>
+                    <option value="暴雨">暴雨</option>
+                    <option value="雪">雪</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>风向风力</label>
+                <input type="text" name="wind" th:value="${weather.wind}" required>
+            </div>
+            <div class="form-group">
+                <label>湿度(%)</label>
+                <input type="text" name="humidity" th:value="${weather.humidity}" required>
+            </div>
+            <div class="form-group">
+                <label>空气质量</label>
+                <select name="airQuality" th:value="${weather.airQuality}">
+                    <option value="优">优</option>
+                    <option value="良">良</option>
+                    <option value="轻度污染">轻度污染</option>
+                    <option value="中度污染">中度污染</option>
+                    <option value="重度污染">重度污染</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button type="submit">保存</button>
+                <button type="button" onclick="history.back()">取消</button>
+            </div>
+        </form>
+        <div class="back">
+            <a th:href="@{/admin/weather/list}">返回天气列表</a>
+        </div>
+    </div>
+</body>
+</html>
