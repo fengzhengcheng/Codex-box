@@ -1,0 +1,52 @@
+# ===========================
+# Node / Frontend
+# ===========================
+node_modules/
+dist/
+.vite/
+*.local
+
+# ===========================
+# Java / Maven
+# ===========================
+target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.log
+!.mvn/wrapper/maven-wrapper.jar
+
+# ===========================
+# IDE
+# ===========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.iml
+
+# ===========================
+# OS
+# ===========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ===========================
+# Environment (sensitive)
+# ===========================
+.env
+.env.local
+.env.*.local
+
+# ===========================
+# Misc
+# ===========================
+*.tmp
+*.bak
